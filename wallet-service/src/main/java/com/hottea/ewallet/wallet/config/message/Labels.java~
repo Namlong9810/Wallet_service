@@ -1,0 +1,7 @@
+package com.hottea.ewallet.wallet.config.message;
+
+public class Labels {
+    public static  String getLabels(String key) {
+        return LabelKey.getLabels(key);
+    }
+}
