@@ -73,11 +73,16 @@ public class WalletServiceImpl implements WalletService {
     public WalletResponse walletDeposit(WalletRequest req) {
         if (req.getWalletId() == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
+        }else if(!isActive(req.getWalletId())){
+            throw new RuntimeException("Wallet not active");
         }
+
         int updateRows = walletRepository.updateBalance(req.getWalletId(), req.getAmount(), Instant.now());
+
         if(updateRows == 0){
             throw new RuntimeException("Update not found");
         }
+
         return walletRepository.findWallet(req.getWalletId())
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
     }
@@ -87,12 +92,12 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal currentBalance = walletRepository.findWallet(req.getWalletId()).get().getBalance();
         BigDecimal amount = (req.getAmount().negate());
 
+        
         if (req.getWalletId() == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
-        }
-
-        //Kiểm tra số dư trong ví
-        if(!hasSufficientFunds(currentBalance, req.getAmount())) {
+        }else if(!isActive(req.getWalletId())){
+            throw new RuntimeException("Wallet not active");
+        }else if(!hasSufficientFunds(currentBalance, req.getAmount())) {
             throw new RuntimeException("Insufficient funds");
         }
 
@@ -114,4 +119,15 @@ public class WalletServiceImpl implements WalletService {
     public boolean hasSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
         return currentBalance.compareTo(amount) >= 0;
     }
+
+    /**
+     * Phương thức kiểm tra trạng thái của ví
+     * @param wallet_id
+     * @return trả về true nếu vì đang hoạt động
+     */
+
+    public boolean  isActive(String wallet_id) {
+        return walletRepository.findWallet(wallet_id).get().getStatus().equals(0);
+    }
+
 }

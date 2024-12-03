@@ -13,7 +13,13 @@ public class LabelKey {
     public static final String SUCCESS_DEFAULT = "success.default";
     public static final String SUCCESS_CREATE = "success.create-success";
 
-    //Lỗi khi kiểm tra ví
+//Lỗi khi kiểm tra ví
+    //Lỗi không tim thấy ví
+    //Lỗi không tìm thấy id người dùng
+    //Lỗi không tìm được id ví của người dùng(Invalid wallet Id)
+    //Lỗi số dư không khả dụng (Insufficient funds)
+    //Lỗi cập nhật không tìm thấy(Update not found)
+
     public static final String ERROR_BALANCE_IS_EMPTY = "error.balance-is-empty";
     public static final String ERROR_BALANCE_IS_NEGATIVE = "error.balance-is-negative";
     public static final String ERROR_CURRENCY_IS_INVALID = "error.currency-is-invalid";
