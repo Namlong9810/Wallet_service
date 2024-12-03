@@ -79,6 +79,7 @@ public class WalletServiceImpl implements WalletService {
         if(updateRows == 0){
             throw new RuntimeException("Update not found");
         }
+
         return new WalletResponseToTransaction("Update balance successfully", 200);
     }
 }

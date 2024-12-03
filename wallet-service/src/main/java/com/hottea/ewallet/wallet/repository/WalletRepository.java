@@ -47,9 +47,9 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     @Transactional
     @Modifying
     @Query("UPDATE Wallet w " +
-            "SET w.balance = :balance, w.updatedAt = :updatedAt " +
+            "SET w.balance = w.balance + :balance, w.updatedAt = :updatedAt " +
             "WHERE w.WalletId = :walletId")
-    int updateBalance(@Param("walletId") String walletId, @Param("balance") BigDecimal balance, @Param("updatedAt") Instant updatedAt);
+    int updateBalance(@Param("walletId") String walletId, @Param("amount") BigDecimal amount, @Param("updatedAt") Instant updatedAt);
 }
 
 
