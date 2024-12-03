@@ -112,6 +112,6 @@ public class WalletServiceImpl implements WalletService {
      * @return trả về true nếu số dư đủ
      */
     public boolean hasSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
-        return currentBalance.compareTo(amount) > 0;
+        return currentBalance.compareTo(amount) >= 0;
     }
 }

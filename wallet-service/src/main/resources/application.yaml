@@ -12,3 +12,223 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect 
         format_sql: true 
+security:
+  cache:
+    url-patterns: '/i18n/*,/content/*,/app/*'
+    max-age: 86400 # Image cache max-age in second, duration: 86400 (1 day)
+  # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
+  cors:
+    allowed-origins: '*' # http://localhost:8780
+    allowed-methods: 'POST,OPTIONS'
+    allowed-headers: '*'
+    exposed-headers: 'Authorization,Link,X-Total-Count,X-Action-Message,X-Action-Params'
+    allow-credentials: true
+    max-age: 1800
+  authentication:
+    jwt:
+      # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
+      base64-secret: 'ajMywt0FWnZYET/u3Pm309ziD6eXRewGX+QsyHs6/Y4ascWDHAAK46ARsuUZKLcjMQxUa5mQfNTaujgm8Sg4TJh4wKGwwXBAtB2gsEm1TkZuSRo97/BEFIR5rEKefTBf41J4kcU/YndvNFJcMRXkgMoC6fvzjSVYx1fGNYxSJqO+neilVm3uBpQiuhQrhTMmrKZJYa5M9xutWfJsbQ1Tf6IQ6zlRKZqdt8edUD/mOuUwltlyC1UZCyALrcji2vFlgXu+eks6IjBkxlAT3LvwVe5Et4MoNaB+eHetIdL6epigf1nYxmLSPT3rWfQxRRmHAwSQnO+1atAubG/xQqvsTQ=='
+    cookie:
+      domain-name:
+      enable-ssl: false
+      http-only: true
+      path: '/'
+      same-site: 'Strict'
+  login:
+    max-attempt-time: 5
+  password:
+    max-attempt-time: 5
+cache:
+  config-type: 'hazelcast' # redis/redisson/hazelcast
+  hazelcast:
+    instanceName: 'api_gateway_dev'
+    localIp: '127.0.0.1'
+    remoteIp: '127.0.0.1'
+    backup-count: 1
+    management-center: # Full reference is available at: http://docs.hazelcast.org/docs/management-center/3.9/manual/html/Deploying_and_Starting.html
+      enabled: false
+      update-interval: 3
+      url: http://192.168.2.107:8180/hazelcast-mancenter
+  redis:
+    mode: 'standalone' # standalone, sentinel
+    standalone:
+      host: '192.168.2.107'
+      port: 6379
+      password:
+    sentinel:
+      port: 26379
+      password:
+      master: masterredis
+      nodes:
+        - localhost
+        #- 10.0.0.17
+        #- 10.0.0.18
+    lettuce-pool:
+      shutdown-timeout: 200 #milliseconds
+      command-timeout: 200 #milliseconds
+      min-idle: 1
+      max-idle: 20
+      max-wait-millis: 200 #milliseconds
+      max-total: 20
+    cache-duration: 10 # thời gian lưu cache (đơn vị phút)
+  redisson:
+    mode: single #single, sentinel
+    clientName: 'redis-client'
+    password: '12345678aA@'
+    subscriptionsPerConnection: 5
+    idleConnectionTimeout: 10000
+    connectTimeout: 10000
+    timeout: 3000
+    retryAttempts: 3
+    retryInterval: 1500
+    threads: 16
+    nettyThreads: 32
+    transportMode: 'NIO'
+    database: 0
+    cache-duration: 10 # thời gian lưu cache (đơn vị phút)
+    #mode single config
+    single:
+      address: 'redis://127.0.0.1:6379' #if use ssl, the address should start with rediss://
+      subscriptionConnectionMinimumIdleSize: 1
+      subscriptionConnectionPoolSize: 50
+      connectionMinimumIdleSize: 24
+      connectionPoolSize: 64
+      dnsMonitoringInterval: 5000
+    #mode sentinel config
+    sentinel:
+      failedSlaveReconnectionInterval: 3000
+      failedSlaveCheckInterval: 60000
+      subscriptionConnectionMinimumIdleSize: 1
+      subscriptionConnectionPoolSize: 50
+      slaveConnectionMinimumIdleSize: 24
+      slaveConnectionPoolSize: 64
+      masterConnectionMinimumIdleSize: 24
+      masterConnectionPoolSize: 64
+      readMode: 'SLAVE' #SLAVE/MASTER/MASTER_SLAVE
+      subscriptionMode: 'SLAVE' #SLAVE/MASTER
+      nodes:
+        - 'redis://127.0.0.1:26379'
+        - 'redis://127.0.0.1:26380'
+      masterName: 'masterredis'
+      checkSentinelsList: false
+  time-to-lives: # time to live in seconds
+    default: -1
+    token: 300 # 5 phút
+    remember-me-token: 7200 # 2 hours
+    refresh-token: 86400 # 1 day
+    otp: 180 # 90 seconds
+    otp-verify: 3600 # lưu id xác thực otp trong 1 giờ
+    temp-file: 3600 #1 hour
+    login-failed: 86400 # 1 day, lưu số lần đăng nhập lỗi để hiện captcha
+    captcha: 300 # 5 phút
+    password-verify: 300 # 5 phút,
+    customer_draft_password: 300 # 5 phút, lưu draft password khi thay đổi pass
+    apiGee_getToken: 300 # 5 phút, lưu token api its t24
+    customer_verify_password_failed: 3600 # 60 phút, lưu số lần xác thực lại pass thất bại
+springfox:
+  documentation:
+    enabled: true #enable spring fox on deverlopment mode
+task:
+  execution:
+    pool:
+      schedule:
+        max-size : 5
+        allow-core-thread-timeout : true
+        core-size : 10
+        keep-alive : 60
+        queue-capacity : 100
+        name : 'its-schedule-threadpool-'
+rsa:
+  key-length: 2048
+  private-key: 'MIIEowIBAAKCAQEAmD9evqQe1hTXdRPEJKEgkTfPGYBk0c6JCY+vLn1m4pIaaDZdJmEWrug7YwRFGfE9TMKk26M3ACGOiu7Uw267Y85/Lb3maD7CplVkhjXVVcQ8aUI4t6/BFI7wLzt7DqAmlJR4FDgTDFQl1W8ZU+QpPyP8S34s9b+yvJZAPin9Pdd23uqNtBY2RFwu+QS27Q5u6IcCLFsb1wgTb3fq/umiQ4MXRzy6jsHoUQ1Z8n305oUWsxsaC6SLCJsFSJh2w6wakScGAF9hmWdGI+PkodILxhi53zM5gWFzusasW4QQJC7tElwhn4iIcJdYF1OIAhV0RQAxjfb5kZ3/1Dm7GxBYMwIDAQABAoIBADKBiz+5GFWysksvlHkGTtR97CEsm8WSO5nFZbsJdNEi4MnDhyFNQgYiGllduELD6a8GP0Rxn7RWbYAffMucd2PDxCL7hWz9rPsbBu8S+sOqBtRwWHpvPqFATeONWuReMo5FtpQWihMj8y0b3w4aeahtmqu8ntOjlXrEaWl16oHR7pa7pjYL+bHjDSModUlFSz8odOlBYOzCEO8lB4E0xbbinMxGDQ2i/ZMLrZm9yKrqz3jVLfHdEbz4v0nEcWAUJ281ZcBgJHJXpUu/66ntmGmhYSXXhloaVw7PlYw23JQfYEEtlZqujqbaILZWVNM10d7zXnL+VhRLp9mUZxIKWSECgYEAzI4WzpUaLAftjHc1qRDvQl6o42clEPgR4Agx6ulQaeVFEB3Jd+chI2XTxJl9+NoWFpGhBhLoYAuKIa2FXD8T1LmjNkzHtjWbGYia6xgCPwx3bZeNda9/jVfAbNRUNZDN6XVQBBpHM+3NcBSb66wv36qd1oxD646Z736sxfcMJ8MCgYEAvomOZH4Wwq5bsEUB7bqmgnSO9MW5zW1tahV/H/rju7XbKz3nuRFX5C5W4ju/EHJFE7R625esc/gsc4Z+v7P+o3Xj9F8bsVefAniU5R9NzMH+JXeHSfoG6Ca6mfZcjdmeBxSfzL2w2Ntf4K5cV0HQFxWbS2yPWiQzbtBcWsPwdtECgYEAtJ/rR7OljqfZfSVuvsFzZDnODC9yLY+/yQGzgmlPVpLa7yY+VqBDRMyPuJSJBgsdYgRqGcDsbJMEAEUG87PHQRpDIpmd6ClhsaRMl7d1lFLfymf+w6KakSahhfff/ATHrpSmeVjy8snTlFq+a9Z515kDEwZ8my4qg65pxc0mcJ0CgYA2iF4lquTOwWJil82Ogb5IVh3YNoMQJYKMOyzQNVlajxj0Tlp04F7cYtrhEyKDDYFxu1TyZn2oD16BjfvW2ChIFmSwu0vMvPw4k9Rho0z8DoWzqXsiFBpH9VWw3Q7uVlthQWjfC2eDGX5eaujo3GA3SyrQMnjw3q2NyLq2C6BWEQKBgHtkq7CBhIdaSk/bY9xsdKqWAHO3z0EPPjy4JPE6+MLA4vPSG7I9vq6Wlebwag8bfXETyv3geJJ9CjP8JOBqmLIKPRBiXrXJe6LpQ4Jso1+cd9LXxRNhkRf9DwtAaijYm1gkKdM7CAHLyfknn1vMzcGK82v2BOavyFC45z/QjllL'
+  public-key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmD9evqQe1hTXdRPEJKEgkTfPGYBk0c6JCY+vLn1m4pIaaDZdJmEWrug7YwRFGfE9TMKk26M3ACGOiu7Uw267Y85/Lb3maD7CplVkhjXVVcQ8aUI4t6/BFI7wLzt7DqAmlJR4FDgTDFQl1W8ZU+QpPyP8S34s9b+yvJZAPin9Pdd23uqNtBY2RFwu+QS27Q5u6IcCLFsb1wgTb3fq/umiQ4MXRzy6jsHoUQ1Z8n305oUWsxsaC6SLCJsFSJh2w6wakScGAF9hmWdGI+PkodILxhi53zM5gWFzusasW4QQJC7tElwhn4iIcJdYF1OIAhV0RQAxjfb5kZ3/1Dm7GxBYMwIDAQAB'
+#  * "0 0 * * * *" = the top of every hour of every day.
+#  * "*/10 * * * * *" = every ten seconds.
+#  * "0 0 8-10 * * *" = 8, 9 and 10 o'clock of every day.
+#  * "0 0 8,10 * * *" = 8 and 10 o'clock of every day.
+#  * "0 0/30 8-10 * * *" = 8:00, 8:30, 9:00, 9:30 and 10 o'clock every day.
+#  * "0 0 9-17 * * MON-FRI" = on the hour nine-to-five weekdays
+#  * "0 0 0 25 12 ?" = every Christmas Day at midnight
+scheduling:
+  email-queue-sender:
+    cron: '0 0/1 * * * *'
+    enabled: false
+    sent-limit: 3
+    max-result: 20
+  mass-indexing-updater:
+    cron: '0 0/1 * * * *'
+    enabled: true
+    time-out: 5000 # job time-out (ms)
+    package-scan: com.its.training.model
+    class-pool: 'Bank, Beneficiary'
+  send-notification:
+    cron: '0 0/5 * * * *' # cứ 5 phút chạy 1 lần
+    enabled: true
+hibernate:
+  search:
+    default:
+      directory_provider: filesystem
+      indexBase: '../lucene/indexes'
+otp:
+  enable: false
+  default-otp: 11111111 #OTP mặc định khi không bật OTP service
+  number-of-digits: 8 #Độ dài OTP
+  template: Nhap ma OTP %s gui ve so dien thoai %s de xac nhan. Ma OTP se het han sau %s phut
+  otp-attempt: -1 # số lần request gửi otp nhưng không được sử dụng (tránh spam otp)
+  duration: 180 # giây
+  otp-confirm-attemp: -1 # tối đa 3 lần xác thực 1 otp
+customer:
+  pre-register-verify-limit: 5
+  login-attempts: 5
+  login-failed-lock-duration: 24 # đơn vị giờ
+  reset-pw-verify-limit: 5
+  change-pw-verify-limit: 5
+  pw-duplicated-limit: 2
+  pw-duration: 180 # đơn vị ngày
+  pw-expired-notice-before: 1,5,10 # thời gian gửi thông báo mật khẩu hết hạn, trước thời hạn 1, 5, 10 ngày
+  ekyc-min-images: 6 # số ảnh ekyc tối thiểu
+  ekyc-max-images: 7 # số ảnh ekyc tối đa
+  default-branch-code: LA0010001 # mã chi nhánh mặc định bên Lào
+  sms-default-language: EN # ngôn ngữ mặc định gửi sms
+  id-card-issue-date-less-than: 5 # year, ngày mở không được lớn hơn 5 năm
+  passport-issue-date-less-than: 10 # year, ngày mở không được lớn hơn 10 năm
+  pw-verify-failed-limit: 3 # số lần tối đa xác nhận mật khẩu thất bại
+consumer:
+  api-gee:
+    key: 'qQcBb1cRHYtMAhzLiS7EwXvRQ6caLc6s'
+    secret: 'p2SQo2FruBR9KERq'
+    refresh-token-before: 5 # lấy lại token trước khi hết hạn x phút
+    base-url: 'https://api-sandbox.mbbank.com.vn/ms'
+    uri:
+      token: 'https://api-sandbox.mbbank.com.vn/oauth2/v1/token'
+      register: '/register'
+      verify-acc-number-m-b: '/mbapplaos/common/v1.0/customer-infor/inquiry'
+      verify-acc-number-internal: '/mbapplaos/common/v1.0/verify-acc-number-internal'
+      request-transfer: '/mbapplaos/common/v1.0/fund-transfer/inbank-request'
+      verify-transfer: '/mbapplaos/common/v1.0/fund-transfer/inbank-confirm'
+      account-balance: '/mbapplaos/common/v1.0/account/balance'
+      transaction-history: '/mbapplaos/common/v1.0/transaction/history'
+      verify-customer: '/mbapplao/v1.0/customer/verifyCustomer'
+      create-payment-account: '/mbapplao/v1.0/customer/requestCreateAccount'
+      query-payment-account: '/mbapplao/v1.0/customer/requestQueryCustomer'
+      confirm-create-account: '/mbapplao/v1.0/customer/confirmCreateAccount'
+      confirm-query-account: '/mbapplao/v1.0/customer/confirmQueryCustomer'
+      verify-account-creation: '/mbapplao/v1.0/customer/updateSector'
+
+firebase:
+  fcm-account-service-path: firebase/mblaos-fcm.json
+
+notification:
+  end-user-type: 'CUSTOMER'
+
+application:
+  constants:
+    its-api:
+      otp-gen:
+        account-type: 'ACCOUNT'
+      inbank-transfer:
+        account-type: 'ACCOUNT'
+        transfer-type: 'INHOUSE'
+        channel: 'ITS'
+        service-type: 'ACCOUNT'
+        currency: 'LAK'
