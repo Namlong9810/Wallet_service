@@ -1,5 +1,6 @@
 package com.hottea.ewallet.wallet.controller;
 
+import com.hottea.ewallet.wallet.dto.response.wallet.WalletResponseToTransaction;
 import com.hottea.ewallet.wallet.enums.message.MessageCode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -69,5 +70,22 @@ public class WalletController {
                 walletService.walletUpdateStatus(wallet_id, request));
     }
 
+    /**
+     *  Nhập tiền vào ví
+     */
+    @PatchMapping("/deposit")
+    public ResponseObject<WalletResponse> walletDeposit(@RequestBody WalletRequest request){
+        return new ResponseObject<>(MessageCode.MSG2000.getKey(), HttpStatus.OK.value(), LocalDateTime.now(),
+                walletService.walletDeposit(request));
+    }
+
+    /**
+     * Rút tiền khỏi ví
+     */
+    @PatchMapping("/withdraw")
+    public ResponseObject<WalletResponse> walletWithdraw(@RequestBody WalletRequest request){
+        return  new ResponseObject<>(MessageCode.MSG2000.getKey(), HttpStatus.OK.value(), LocalDateTime.now(),
+                walletService.walletWithdraw(request));
+    }
 
 }

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final ConfigurationRepository configurationRepository;
-    private final UserClient userClient;
+//    private final UserClient userClient;
     @Override 
     public Wallet newWallet(){
         //Validate wallet
@@ -38,9 +38,9 @@ public class WalletServiceImpl implements WalletService {
         //Ghi log
 
         Wallet wallet = new Wallet();
-        wallet.setUserId(userClient.getUserById(id).getId());
+//        wallet.setUserId(userClient.getUserById(id).getId()); Lấy số user_id từ UserService
         wallet.setWalletId(UUID.randomUUID().toString());
-//        wallet.setUserId(UUID.randomUUID());   // sinh tạm user_id
+        wallet.setUserId(UUID.randomUUID());   // sinh tạm user_id
         wallet.setBalance(BigDecimal.ZERO);    // khởi tạo balance = 0
         wallet.setCurrency(configurationRepository.findByGroupConfigAndKey("CURRENCY", "VND").get().getValue());
         wallet.setStatus(configurationRepository.findByGroupConfigAndKey("STATUS", "ACTIVE").get().getValue());
@@ -70,16 +70,48 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponseToTransaction walletUpdateBalance(WalletRequest req) {
+    public WalletResponse walletDeposit(WalletRequest req) {
         if (req.getWalletId() == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
         }
-
         int updateRows = walletRepository.updateBalance(req.getWalletId(), req.getAmount(), Instant.now());
         if(updateRows == 0){
             throw new RuntimeException("Update not found");
         }
+        return walletRepository.findWallet(req.getWalletId())
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+    }
 
-        return new WalletResponseToTransaction("Update balance successfully", 200);
+    @Override
+    public WalletResponse walletWithdraw(WalletRequest req) {
+        BigDecimal currentBalance = walletRepository.findWallet(req.getWalletId()).get().getBalance();
+        BigDecimal amount = (req.getAmount().negate());
+
+        if (req.getWalletId() == null) {
+            throw new IllegalArgumentException("Invalid Wallet ID");
+        }
+
+        //Kiểm tra số dư trong ví
+        if(!hasSufficientFunds(currentBalance, req.getAmount())) {
+            throw new RuntimeException("Insufficient funds");
+        }
+
+        int updateRows = walletRepository.updateBalance(req.getWalletId(), amount, Instant.now());
+
+        if (updateRows == 0) {
+            throw new RuntimeException("Update not found");
+        }
+
+        return walletRepository.findWallet(req.getWalletId())
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+    }
+
+    /**
+     * Phương thức kiểm tra số dư trong ví
+     * @param currentBalance, amount
+     * @return trả về true nếu số dư đủ
+     */
+    public boolean hasSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
+        return currentBalance.compareTo(amount) > 0;
     }
 }

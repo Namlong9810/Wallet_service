@@ -43,11 +43,12 @@ public interface WalletService {
      */
     WalletResponse walletUpdateStatus(String wallet_id,WalletStatusRequest req);
 
-    /**
+   /**
      * Phương thức cập nhật số dư của ví
      *
      * @param req Yêu cầu cập nhật số dư của ví
      * @return Trạng thái trả về cho transaction
      */
-    WalletResponseToTransaction walletUpdateBalance(WalletRequest req);
+    WalletResponse walletDeposit(WalletRequest req);
+    WalletResponse walletWithdraw(WalletRequest req);
 }
