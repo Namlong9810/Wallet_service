@@ -26,6 +26,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Wallet extends BaseEntity{
     @Id
     @Column(name = "wallet_id")
@@ -42,4 +43,21 @@ public class Wallet extends BaseEntity{
 
     @Column(name = "status")
     private Integer status;
+
+    public Wallet(String walletId, UUID userId, BigDecimal balance, Integer currency, Integer status, Instant createdAt, Instant updatedAt) {
+        super(createdAt, updatedAt);
+        this.walletId = walletId;
+        this.userId = userId;
+        this.balance = balance;
+        this.currency = currency;
+        this.status = status;
+    }
+
+    public Wallet(String walletId, BigDecimal balance, Integer currency, Integer status, Instant createdAt, Instant updatedAt) {
+        super(createdAt, updatedAt);
+        this.walletId = walletId;
+        this.balance = balance;
+        this.currency = currency;
+        this.status = status;
+    }
 }

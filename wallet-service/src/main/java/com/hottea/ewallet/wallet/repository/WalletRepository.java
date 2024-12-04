@@ -31,11 +31,10 @@ import org.springframework.data.repository.query.Param;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
-    @Query("SELECT NEW com.hottea.ewallet.wallet.dto.response.wallet.WalletResponse(" +
-       "w.balance, w.currency, w.status, w.createdAt, w.updatedAt) " +
+    @Query("SELECT w " +
        "FROM Wallet w " +
        "WHERE w.walletId = :walletId ")
-    Optional<WalletResponse> findWallet(@Param("walletId") String walletId);
+    Optional<Wallet> findWallet(@Param("walletId") String walletId);
 
     @Transactional
     @Modifying

@@ -2,12 +2,7 @@ package com.hottea.ewallet.wallet.controller;
 
 import com.hottea.ewallet.wallet.dto.response.wallet.WalletResponseToTransaction;
 import com.hottea.ewallet.wallet.enums.message.MessageCode;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import com.hottea.ewallet.wallet.service.WalletService;
 
@@ -22,7 +17,6 @@ import com.hottea.ewallet.wallet.dto.request.wallet.WalletStatusRequest;
 import com.hottea.ewallet.wallet.dto.response.common.ResponseObject;
 import com.hottea.ewallet.wallet.dto.response.wallet.WalletResponse;
 import com.hottea.ewallet.wallet.entity.Wallet;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 /**
@@ -73,7 +67,7 @@ public class WalletController {
     /**
      *  Nhập tiền vào ví
      */
-    @PatchMapping("/deposit")
+    @PutMapping("/deposit")
     public ResponseObject<WalletResponse> walletDeposit(@RequestBody WalletRequest request){
         return new ResponseObject<>(MessageCode.MSG2000.getKey(), HttpStatus.OK.value(), LocalDateTime.now(),
                 walletService.walletDeposit(request));
@@ -82,7 +76,7 @@ public class WalletController {
     /**
      * Rút tiền khỏi ví
      */
-    @PatchMapping("/withdraw")
+    @PutMapping("/withdraw")
     public ResponseObject<WalletResponse> walletWithdraw(@RequestBody WalletRequest request){
         return  new ResponseObject<>(MessageCode.MSG2000.getKey(), HttpStatus.OK.value(), LocalDateTime.now(),
                 walletService.walletWithdraw(request));

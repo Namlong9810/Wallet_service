@@ -54,35 +54,7 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>com.hottea.ewallet.common</groupId>-->
-<!--			<artifactId>security</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
 
-<!--		<dependency>-->
-<!--			<groupId>com.hottea.ewallet.common</groupId>-->
-<!--			<artifactId>api-common</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>com.hottea.ewallet.common</groupId>-->
-<!--			<artifactId>label-bundle</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>com.hottea.ewallet.common</groupId>-->
-<!--			<artifactId>utils</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>com.hottea.ewallet.common</groupId>-->
-<!--			<artifactId>cache</artifactId>-->
-<!--			<version>0.0.1-SNAPSHOT</version>-->
-<!--		</dependency>-->
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
