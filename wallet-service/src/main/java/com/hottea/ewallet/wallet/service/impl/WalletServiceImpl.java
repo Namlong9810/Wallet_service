@@ -86,7 +86,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletResponse walletWithdraw(WalletRequest req) {
-        BigDecimal currentBalance = walletRepository.findWallet(req.getWalletId()).get().getBalance();
+        BigDecimal currentBalance = walletRepository.findById(req.getWalletId()).get().getBalance();
         BigDecimal amount = (req.getAmount().negate());
         String walletId = req.getWalletId();
 
@@ -123,7 +123,7 @@ public class WalletServiceImpl implements WalletService {
      * @return
      */
     public WalletResponse formatResponse(String walletId) {
-        Wallet wallet = walletRepository.findWallet(walletId)
+        Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         String currency = configurationRepository.findByGroupConfigAndValue("CURRENCY", wallet.getCurrency()).get().getKey();

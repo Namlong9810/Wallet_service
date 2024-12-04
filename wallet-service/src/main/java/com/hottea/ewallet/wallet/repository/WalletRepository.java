@@ -29,12 +29,12 @@ import org.springframework.data.repository.query.Param;
  */
 
 @Repository
-public interface WalletRepository extends JpaRepository<Wallet, Long> {
+public interface WalletRepository extends JpaRepository<Wallet, String> {
 
-    @Query("SELECT w " +
-       "FROM Wallet w " +
-       "WHERE w.walletId = :walletId ")
-    Optional<Wallet> findWallet(@Param("walletId") String walletId);
+//    @Query("SELECT w " +
+//       "FROM Wallet w " +
+//       "WHERE w.walletId = :walletId ")
+//    Optional<Wallet> findWallet(@Param("walletId") String walletId);
 
     @Transactional
     @Modifying
