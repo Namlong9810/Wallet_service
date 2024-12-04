@@ -55,21 +55,8 @@ public class WalletServiceImpl implements WalletService {
         if (wallet_id == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
         } 
-        //validate req
-        Wallet wallet = walletRepository.findWallet(wallet_id)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
-        String currency = configurationRepository.findByGroupConfigAndValue("CURRENCY", wallet.getCurrency()).get().getKey();
-        String status = configurationRepository.findByGroupConfigAndValue("STATUS", wallet.getStatus()).get().getKey();
-
-        return WalletResponse.builder()
-                .walletId(wallet.getWalletId())
-                .balance(wallet.getBalance())
-                .currency(currency)
-                .status(status)
-                .createdAt(wallet.getCreatedAt())
-                .updatedAt(wallet.getUpdatedAt())
-                .build();
+        return formatResponse(wallet_id);
     }
 
     @Override
@@ -78,24 +65,14 @@ public class WalletServiceImpl implements WalletService {
         if(updateRows == 0){
             throw new RuntimeException("Update not found");
         }
-        Wallet wallet = walletRepository.findWallet(wallet_id)
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
-        String currency = configurationRepository.findByGroupConfigAndValue("CURRENCY", wallet.getCurrency()).get().getKey();
-        String status = configurationRepository.findByGroupConfigAndValue("STATUS", wallet.getStatus()).get().getKey();
-
-        return WalletResponse.builder()
-                .walletId(wallet.getWalletId())
-                .balance(wallet.getBalance())
-                .currency(currency)
-                .status(status)
-                .createdAt(wallet.getCreatedAt())
-                .updatedAt(wallet.getUpdatedAt())
-                .build();
+        return walletInfor(wallet_id);
     }
 
     @Override
     public WalletResponse walletDeposit(WalletRequest req) {
+        String walletId = req.getWalletId();
+
         if (req.getWalletId() == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
         }
@@ -104,26 +81,14 @@ public class WalletServiceImpl implements WalletService {
             throw new RuntimeException("Update not found");
         }
 
-        Wallet wallet = walletRepository.findWallet(req.getWalletId())
-                .orElseThrow(() -> new RuntimeException("Wallet not found"));
-
-        String currency = configurationRepository.findByGroupConfigAndValue("CURRENCY", wallet.getCurrency()).get().getKey();
-        String status = configurationRepository.findByGroupConfigAndValue("STATUS", wallet.getStatus()).get().getKey();
-
-        return WalletResponse.builder()
-                .walletId(wallet.getWalletId())
-                .balance(wallet.getBalance())
-                .currency(currency)
-                .status(status)
-                .createdAt(wallet.getCreatedAt())
-                .updatedAt(wallet.getUpdatedAt())
-                .build();
+        return formatResponse(walletId);
     }
 
     @Override
     public WalletResponse walletWithdraw(WalletRequest req) {
         BigDecimal currentBalance = walletRepository.findWallet(req.getWalletId()).get().getBalance();
         BigDecimal amount = (req.getAmount().negate());
+        String walletId = req.getWalletId();
 
         if (req.getWalletId() == null) {
             throw new IllegalArgumentException("Invalid Wallet ID");
@@ -140,7 +105,25 @@ public class WalletServiceImpl implements WalletService {
             throw new RuntimeException("Update not found");
         }
 
-        Wallet wallet = walletRepository.findWallet(req.getWalletId())
+        return formatResponse(walletId);
+    }
+
+    /**
+     * Phương thức kiểm tra số dư trong ví
+     * @param currentBalance, amount
+     * @return trả về true nếu số dư đủ
+     */
+    public boolean hasSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
+        return currentBalance.compareTo(amount) >= 0;
+    }
+
+    /**
+     * Phương thức trả về dữ liệu dạng WalletResponse
+     * @param walletId
+     * @return
+     */
+    public WalletResponse formatResponse(String walletId) {
+        Wallet wallet = walletRepository.findWallet(walletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         String currency = configurationRepository.findByGroupConfigAndValue("CURRENCY", wallet.getCurrency()).get().getKey();
@@ -154,14 +137,5 @@ public class WalletServiceImpl implements WalletService {
                 .createdAt(wallet.getCreatedAt())
                 .updatedAt(wallet.getUpdatedAt())
                 .build();
-    }
-
-    /**
-     * Phương thức kiểm tra số dư trong ví
-     * @param currentBalance, amount
-     * @return trả về true nếu số dư đủ
-     */
-    public boolean hasSufficientFunds(BigDecimal currentBalance, BigDecimal amount) {
-        return currentBalance.compareTo(amount) >= 0;
     }
 }
